@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Detection</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .container { max-width: 600px; margin: 40px auto; padding: 30px; background: #f9f9f9; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #101D42; }
+        .result { margin-top: 20px; padding: 15px; background: #e6f7e6; border-radius: 8px; color: #101D42; font-size: 18px; }
+        label { font-weight: bold; color: #101D42; }
+        input[type=file] { margin-bottom: 15px; }
+        button { background: #101D42; color: #fff; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #152553; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Parking Spot Detection</h2>
+        <form id="detectForm">
+            <label for="image">Parking Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required><br>
+            <label for="mask">Mask Image:</label>
+            <input type="file" id="mask" name="mask" accept="image/*" required><br>
+            <button type="submit">Detect</button>
+        </form>
+        <div id="result" class="result" style="display:none;"></div>
+    </div>
+    <script>
+    document.getElementById('detectForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData();
+        formData.append('image', form.image.files[0]);
+        formData.append('mask', form.mask.files[0]);
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'none';
+        resultDiv.innerHTML = '';
+        try {
+            const res = await fetch('/api/parking-detect', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.error) {
+                resultDiv.innerHTML = '<b>Error:</b> ' + data.error;
+            } else {
+                resultDiv.innerHTML = `<b>Available:</b> ${data.available} <br><b>Occupied:</b> ${data.occupied} <br><b>Total:</b> ${data.total}`;
+            }
+            resultDiv.style.display = 'block';
+        } catch (err) {
+            resultDiv.innerHTML = 'Error connecting to server.';
+            resultDiv.style.display = 'block';
+        }
+    }
+    </script>
+</body>
+</html> 

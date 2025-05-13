@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VALET</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/all.min.css">
+    <link rel="stylesheet" href="/static/normalize.css">
+    <!-- GOOGLE FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="header">
+            
+        <ul class="ul-header">
+            <li><a href="index.html" class="a-home">Home</a></li>
+            <li><a href="#dashboard">Route</a></li>
+            <li><a href="help.html">Help</a></li>
+       </ul> <!-- ul-header -->
+
+    </div>  <!-- /header -->
+    <div class="div-contener">
+        <div class="contener-icon">
+            <div class="icon-home">
+                <i class="fa-solid fa-house-chimney"></i>
+            </div>  <!--icon-home-->
+            <div class="icon-home ss">
+                <i class="fa-solid fa-tree"></i>
+                <h3>VALET</h3>
+            </div>  <!--icon-home-->
+            <div class="icon-home">
+                <i class="fa-solid fa-road"></i>
+            </div>  <!--icon-home-->
+                                   
+        </div> <!--/contener-icon-->
+        
+    </div> <!--/div-icons-->
+    <div class="div-welcome">
+        <h2>Welcome to valet</h2>
+        <p>Parking Lma T3oz</p>
+        <button>Get Started</button>
+    </div><!--div-welcome-->
+
+    <div id="dashboard">
+
+        <div class="video-container">
+          <input type="file" id="videoUpload" accept="video/*">
+          <video id="videoPlayer" controls></video>
+        </div> <!-- /video-container-->
+      
+        <div class="info-box" onclick="showInfo('available')">
+          <div class="info">
+            <h2>Available Spaces</h2>
+            <p>Counting in progress...</p>
+          </div> <!-- info-->
+          <div class="arrow">></div> 
+        </div> <!--info box-->
+        <div id="available-details" class="details-box" style="display: none;">
+          <p id="available-count">Available spaces:...</p>
+        </div>
+      
+        <div class="info-box" onclick="showInfo('occupied')">
+          <div class="info">
+            <h2>Occupied Spaces</h2>
+            <p>Counting in progress...</p>
+          </div> <!-- info-->
+          <div class="arrow">></div>
+        </div> <!--info box-->
+        <div id="occupied-details" class="details-box" style="display: none;">
+          <p id="occupied-count">Occupied Spaces:...</p>
+        </div>
+      
+        <div class="info-box" onclick="showInfo('route')">
+          <div class="info">
+            <h2>Best Route</h2>
+            <p>Determining...</p>
+          </div> <!-- info-->
+          <div class="arrow">></div>
+        </div> <!--info box-->
+        <div id="route-details" class="details-box" style="display: none;">
+          <p id="route-info">Best Route:...</p>
+        </div>
+    </div> <!--dashboard-->
+      
+    <script src="/static/js/script.js"></script>
+
+ 
+</body>
+</html>
