@@ -40,14 +40,13 @@ function showInfo(type) {
   const boxes = {
     available: document.getElementById('available-details'),
     occupied: document.getElementById('occupied-details'),
-    route: document.getElementById('route-details')
+    cost: document.getElementById('cost-box')
   };
 
   // استخدم البيانات الحقيقية لو موجودة
   const data = window.parkingData || {
     available: 12,
-    occupied: 8,
-    route: "A2 → B1 → C3"
+    occupied: 8
   };
 
   if (lastOpened === type) {
@@ -64,11 +63,11 @@ function showInfo(type) {
     document.getElementById('available-count').innerText = "Available spaces: " + data.available;
   } else if (type === 'occupied') {
     document.getElementById('occupied-count').innerText = "Occupied spaces: " + data.occupied;
-  } else if (type === 'route') {
-    document.getElementById('route-info').innerText = "Best route: " + data.route;
+  } else if (type === 'cost') {
+    let cost = data.cost !== undefined ? data.cost : '...';
+    document.getElementById('cost-value').innerText = "Cost: " + cost + " EGP";
   }
 
   boxes[type].style.display = 'block';
   lastOpened = type;
 }
- 

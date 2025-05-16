@@ -41,13 +41,12 @@ def serve_normalize():
 
 # Main page
 @app.route('/')
-def index():
-    return render_template('index.html')
-
-# Help page
-@app.route('/help')
-def help_page():
-    return render_template('help.html')
+def main():
+    page = request.args.get('page', 'index')
+    if page == 'help':
+        return render_template('help.html')
+    else:
+        return render_template('index.html')
 
 # API endpoint for parking info (dynamic data)
 @app.route('/api/parking-info')
@@ -67,90 +66,7 @@ def predict():
     prediction = model.predict([features])
     return jsonify({'prediction': prediction.tolist()})
 
-# API جديد: تحليل صورة باركنج وتحديد الأماكن الفاضية والمشغولة
-@app.route('/api/parking-detect', methods=['POST'])
-def parking_detect():
-    if 'image' not in request.files or 'mask' not in request.files:
-        return jsonify({'error': 'يرجى رفع صورة الباركنج وصورة الماسك'}), 400
-    image_file = request.files['image']
-    mask_file = request.files['mask']
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image_file.filename))
-    mask_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(mask_file.filename))
-    image_file.save(image_path)
-    mask_file.save(mask_path)
-
-    # قراءة الصورة والماسك
-    frame = cv2.imread(image_path)
-    mask = cv2.imread(mask_path, 0)
-    if frame is None or mask is None:
-        return jsonify({'error': 'تعذر قراءة الصورة أو الماسك'}), 400
-
-    # استخراج أماكن الركن
-    connected_components = cv2.connectedComponentsWithStats(mask, 4, cv2.CV_32S)
-    spots = get_parking_spots_bboxes(connected_components)
-
-    # تحليل كل مكان ركن
-    spots_status = []
-    for spot in spots:
-        x1, y1, w, h = spot
-        spot_crop = frame[y1:y1 + h, x1:x1 + w, :]
-        status = empty_or_not(spot_crop)
-        spots_status.append(status)
-
-    available = int(np.sum(spots_status))
-    occupied = len(spots_status) - available
-
-    return jsonify({
-        'available': available,
-        'occupied': occupied,
-        'total': len(spots_status),
-        'status': spots_status
-    })
-
-@app.route('/api/parking-detect-image', methods=['POST'])
-def parking_detect_image():
-    if 'image' not in request.files or 'mask' not in request.files:
-        return jsonify({'error': 'يرجى رفع صورة الباركنج وصورة الماسك'}), 400
-    image_file = request.files['image']
-    mask_file = request.files['mask']
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(image_file.filename))
-    mask_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(mask_file.filename))
-    image_file.save(image_path)
-    mask_file.save(mask_path)
-
-    # قراءة الصورة والماسك
-    frame = cv2.imread(image_path)
-    mask = cv2.imread(mask_path, 0)
-    if frame is None or mask is None:
-        return jsonify({'error': 'تعذر قراءة الصورة أو الماسك'}), 400
-
-    # استخراج أماكن الركن
-    connected_components = cv2.connectedComponentsWithStats(mask, 4, cv2.CV_32S)
-    spots = get_parking_spots_bboxes(connected_components)
-
-    # تحليل كل مكان ركن ورسم المستطيلات
-    spots_status = []
-    for spot in spots:
-        x1, y1, w, h = spot
-        spot_crop = frame[y1:y1 + h, x1:x1 + w, :]
-        status = empty_or_not(spot_crop)
-        spots_status.append(status)
-        color = (0, 255, 0) if status else (0, 0, 255)
-        cv2.rectangle(frame, (x1, y1), (x1 + w, y1 + h), color, 2)
-
-    # رسم عدد الأماكن الفاضية
-    cv2.rectangle(frame, (80, 20), (550, 80), (0, 0, 0), -1)
-    cv2.putText(frame, f'Available spots: {int(np.sum(spots_status))} / {len(spots_status)}', (100, 60),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-
-    # تحويل الصورة إلى بايتس وإرجاعها
-    _, img_encoded = cv2.imencode('.png', frame)
-    return send_file(
-        io.BytesIO(img_encoded.tobytes()),
-        mimetype='image/png',
-        as_attachment=False,
-        download_name='result.png'
-    )
+# ... باقي الأكواد كما هي ...
 
 @app.route('/api/parking-detect-video', methods=['POST'])
 def parking_detect_video():
@@ -203,12 +119,17 @@ def parking_detect_video():
     available = int(np.sum(spots_status))
     occupied = len(spots_status) - available
 
+    # حساب التكلفة (مثال: 10 جنيه لكل مكان مشغول)
+    COST_PER_SPOT = 10
+    cost = occupied * COST_PER_SPOT
+
     return jsonify({
         'available': available,
         'occupied': occupied,
         'total': len(spots_status),
         'status': spots_status,
-        'image_base64': img_base64
+        'image_base64': img_base64,
+        'cost': cost
     })
 
 if __name__ == '__main__':

@@ -17,9 +17,9 @@
     <div class="header">
             
         <ul class="ul-header">
-            <li><a href="index.html" class="a-home">Home</a></li>
+            <li><a href="/?page=index" class="a-home">Home</a></li>
             <li><a href="#dashboard">Route</a></li>
-            <li><a href="help.html">Help</a></li>
+            <li><a href="/?page=help">Help</a></li>
        </ul> <!-- ul-header -->
 
     </div>  <!-- /header -->
@@ -74,16 +74,17 @@
           <p id="occupied-count">Occupied Spaces:...</p>
         </div>
       
-        <div class="info-box" onclick="showInfo('route')">
+        <div class="info-box" onclick="showInfo('cost')">
           <div class="info">
-            <h2>Best Route</h2>
-            <p>Determining...</p>
+            <h2>Cost</h2>
+            <p>Click to show cost</p>
           </div> <!-- info-->
           <div class="arrow">></div>
         </div> <!--info box-->
-        <div id="route-details" class="details-box" style="display: none;">
-          <p id="route-info">Best Route:...</p>
+        <div id="cost-box" class="details-box" style="display: none;">
+          <p id="cost-value">Cost: ...</p>
         </div>
+
     </div> <!--dashboard-->
       
     <script src="/static/js/script.js"></script>
